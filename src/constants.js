@@ -13,5 +13,7 @@ export const API_ENDPOINTS = {
   RESUME_AUTO_REWRITE: 'resume/auto-rewrite',
   INTERVIEW_GENERATE_QUESTIONS: 'interview/generate-questions',
   INTERVIEW_ANSWER_QUESTIONS: 'interview/answer-questions',
+  RESUME_SKILLS_GAP: 'resume/skills-gap',
+  RESUME_CAREER_RECOMMENDATION: 'resume/generate_career-recommendation',
   // Add more endpoints as needed
 };

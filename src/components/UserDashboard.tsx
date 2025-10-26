@@ -5,10 +5,11 @@ import ResumeGenerator from './ResumeGenerator';
 import CoverLetterWriter from './CoverLetterWriter';
 import ResumeOptimizer from './ResumeOptimizer';
 import MockInterview from './MockInterview';
+import CareerCoaching from './CareerCoaching';
 
 const UserDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer' | 'mock-interview'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer' | 'mock-interview' | 'career-coaching'>('dashboard');
 
   if (currentView === 'portfolio-builder') {
     return <PortfolioBuilder onBack={() => setCurrentView('dashboard')} />;
@@ -28,6 +29,10 @@ const UserDashboard: React.FC = () => {
 
   if (currentView === 'mock-interview') {
     return <MockInterview onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'career-coaching') {
+    return <CareerCoaching onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -243,24 +248,27 @@ const UserDashboard: React.FC = () => {
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+                      <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
                         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
                       </div>
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Analytics</dt>
-                        <dd className="text-lg font-medium text-gray-900">View Progress</dd>
+                        <dt className="text-sm font-medium text-gray-500 truncate">Career Coaching</dt>
+                        <dd className="text-lg font-medium text-gray-900">Skills & Career Path</dd>
                       </dl>
                     </div>
                   </div>
                 </div>
                 <div className="bg-gray-50 px-5 py-3">
                   <div className="text-sm">
-                    <button className="text-blue-600 hover:text-blue-500 font-medium">
-                      View Analytics →
+                    <button 
+                      onClick={() => setCurrentView('career-coaching')}
+                      className="text-purple-600 hover:text-purple-500 font-medium"
+                    >
+                      Start Coaching →
                     </button>
                   </div>
                 </div>
