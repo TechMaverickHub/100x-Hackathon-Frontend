@@ -28,5 +28,6 @@ export const API_ENDPOINTS = {
   ANALYTICS_USER_REGISTRATION_TREND: 'analytics/user-registration-trend',
   ANALYTICS_SOURCE_POPULARITY: 'analytics/source-popularity',
   ANALYTICS_CREDIT_REMAINING: 'analytics/credit-remaining',
+  ANALYTICS_API_CALL_LIST_FILTER: 'analytics/api-call-list-filter',
   // Add more endpoints as needed
 };

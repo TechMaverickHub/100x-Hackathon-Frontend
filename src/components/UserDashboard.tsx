@@ -9,12 +9,13 @@ import CareerCoaching from './CareerCoaching';
 import ProfileEdit from './ProfileEdit';
 import JobSourceSelection from './JobSourceSelection';
 import SubscriptionPage from './SubscriptionPage';
+import AICallListFilter from './AICallListFilter';
 import api from '../services/api';
 import { API_ENDPOINTS } from '../constants';
 
 const UserDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer' | 'mock-interview' | 'career-coaching' | 'profile-edit' | 'job-source-selection' | 'subscription'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer' | 'mock-interview' | 'career-coaching' | 'profile-edit' | 'job-source-selection' | 'subscription' | 'ai-call-list'>('dashboard');
   const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
 
   useEffect(() => {
@@ -64,6 +65,10 @@ const UserDashboard: React.FC = () => {
 
   if (currentView === 'subscription') {
     return <SubscriptionPage onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'ai-call-list') {
+    return <AICallListFilter onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -349,6 +354,36 @@ const UserDashboard: React.FC = () => {
                       className="text-purple-600 hover:text-purple-500 font-medium"
                     >
                       View Plans →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">AI Call History</dt>
+                        <dd className="text-lg font-medium text-gray-900">View API Calls</dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 px-5 py-3">
+                  <div className="text-sm">
+                    <button 
+                      onClick={() => setCurrentView('ai-call-list')}
+                      className="text-indigo-600 hover:text-indigo-500 font-medium"
+                    >
+                      View History →
                     </button>
                   </div>
                 </div>
