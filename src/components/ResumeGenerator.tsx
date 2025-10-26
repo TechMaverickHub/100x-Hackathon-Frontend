@@ -67,6 +67,7 @@ const ResumeGenerator: React.FC<ResumeGeneratorProps> = ({ onBack }) => {
   const { user } = useAuth();
   const [generatedResume, setGeneratedResume] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const [formData, setFormData] = useState<ResumeFormData>({
     name: user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : '',
     role: '',
@@ -96,6 +97,37 @@ const ResumeGenerator: React.FC<ResumeGeneratorProps> = ({ onBack }) => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedResume);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = generatedResume;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
+  };
+
+  const downloadLaTeX = () => {
+    const blob = new Blob([generatedResume], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'resume.tex';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   };
 
   const addTechnicalSkill = () => {
@@ -602,49 +634,73 @@ const ResumeGenerator: React.FC<ResumeGeneratorProps> = ({ onBack }) => {
             </div>
           </div>
           
-          <div className="mt-6 flex gap-4">
-            <button
-              onClick={generateResume}
-              disabled={isGenerating}
-              className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-2 rounded-md font-medium transition-colors"
-            >
-              {isGenerating ? 'Generating...' : 'Generate Resume'}
-            </button>
-            {onBack && (
+          <div className="mt-6">
+            {/* Simple Disclaimer */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+              <p className="text-sm text-blue-700">
+                <strong>Not satisfied with the current output?</strong> You can modify your information and generate a new resume.
+              </p>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="flex gap-4">
               <button
-                onClick={onBack}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors"
+                onClick={generateResume}
+                disabled={isGenerating}
+                className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-2 rounded-md font-medium transition-colors"
               >
-                Back to Dashboard
+                {isGenerating ? 'Generating...' : 'Generate Resume'}
               </button>
-            )}
+              {onBack && (
+                <button
+                  onClick={onBack}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors"
+                >
+                  Back to Dashboard
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Generated Resume Display */}
         {generatedResume && (
           <div className="mt-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Generated Resume</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* LaTeX Code */}
-              <div className="bg-gray-900 rounded-lg p-4">
-                <h3 className="text-white font-medium mb-3">LaTeX Code</h3>
-                <pre className="text-green-400 text-sm overflow-auto max-h-96">
-                  <code>{generatedResume}</code>
-                </pre>
-              </div>
-              
-              {/* Preview */}
-              <div className="bg-white rounded-lg border p-4">
-                <h3 className="text-gray-900 font-medium mb-3">Preview</h3>
-                <div className="border rounded-lg overflow-hidden">
-                  <div className="bg-gray-100 p-4 text-center text-gray-600">
-                    <p className="text-sm">LaTeX Preview</p>
-                    <p className="text-xs mt-2">Copy the LaTeX code and compile it to see the formatted resume</p>
-                  </div>
-                </div>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-gray-900">Generated Resume</h2>
+              <div className="flex gap-2">
+                <button
+                  onClick={copyToClipboard}
+                  className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                    copySuccess 
+                      ? 'bg-green-600 text-white' 
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
+                >
+                  {copySuccess ? '✓ Copied!' : 'Copy LaTeX'}
+                </button>
+                <button
+                  onClick={downloadLaTeX}
+                  className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md font-medium transition-colors"
+                >
+                  Download .tex
+                </button>
               </div>
             </div>
+            
+            {/* LaTeX Code */}
+            <div className="bg-gray-900 rounded-lg p-4">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-white font-medium">LaTeX Code</h3>
+                <span className="text-gray-400 text-sm">
+                  {generatedResume.split('\n').length} lines
+                </span>
+              </div>
+              <pre className="text-green-400 text-sm overflow-auto max-h-96 bg-black rounded p-3">
+                <code>{generatedResume}</code>
+              </pre>
+            </div>
+            
           </div>
         )}
       </div>
