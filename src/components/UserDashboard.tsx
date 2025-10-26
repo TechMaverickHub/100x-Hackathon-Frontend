@@ -4,10 +4,11 @@ import PortfolioBuilder from './PortfolioBuilder';
 import ResumeGenerator from './ResumeGenerator';
 import CoverLetterWriter from './CoverLetterWriter';
 import ResumeOptimizer from './ResumeOptimizer';
+import MockInterview from './MockInterview';
 
 const UserDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer' | 'mock-interview'>('dashboard');
 
   if (currentView === 'portfolio-builder') {
     return <PortfolioBuilder onBack={() => setCurrentView('dashboard')} />;
@@ -23,6 +24,10 @@ const UserDashboard: React.FC = () => {
 
   if (currentView === 'resume-optimizer') {
     return <ResumeOptimizer onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'mock-interview') {
+    return <MockInterview onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -194,7 +199,10 @@ const UserDashboard: React.FC = () => {
                 </div>
                 <div className="bg-gray-50 px-5 py-3">
                   <div className="text-sm">
-                    <button className="text-red-600 hover:text-red-500 font-medium">
+                    <button 
+                      onClick={() => setCurrentView('mock-interview')}
+                      className="text-red-600 hover:text-red-500 font-medium"
+                    >
                       Start Interview →
                     </button>
                   </div>
