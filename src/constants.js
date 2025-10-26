@@ -15,5 +15,6 @@ export const API_ENDPOINTS = {
   INTERVIEW_ANSWER_QUESTIONS: 'interview/answer-questions',
   RESUME_SKILLS_GAP: 'resume/skills-gap',
   RESUME_CAREER_RECOMMENDATION: 'resume/generate_career-recommendation',
+  USER_LIST_FILTER: 'user/list-filter',
   // Add more endpoints as needed
 };
