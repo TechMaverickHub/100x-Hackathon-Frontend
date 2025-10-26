@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import PortfolioBuilder from './PortfolioBuilder';
 import ResumeGenerator from './ResumeGenerator';
@@ -8,10 +8,26 @@ import MockInterview from './MockInterview';
 import CareerCoaching from './CareerCoaching';
 import ProfileEdit from './ProfileEdit';
 import JobSourceSelection from './JobSourceSelection';
+import api from '../services/api';
+import { API_ENDPOINTS } from '../constants';
 
 const UserDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer' | 'mock-interview' | 'career-coaching' | 'profile-edit' | 'job-source-selection'>('dashboard');
+  const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchCredits = async () => {
+      try {
+        const response = await api.get(API_ENDPOINTS.ANALYTICS_CREDIT_REMAINING);
+        setCreditsRemaining(response.data.results.credits_remaining);
+      } catch (error) {
+        console.error('Error fetching credits:', error);
+      }
+    };
+
+    fetchCredits();
+  }, []);
 
   if (currentView === 'portfolio-builder') {
     return <PortfolioBuilder onBack={() => setCurrentView('dashboard')} />;
@@ -55,6 +71,16 @@ const UserDashboard: React.FC = () => {
               <h1 className="text-3xl font-bold text-gray-900">PortfolioAI</h1>
             </div>
             <div className="flex items-center space-x-4">
+              {creditsRemaining !== null && (
+                <div className="flex items-center space-x-2 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  </svg>
+                  <span className="text-sm font-medium text-green-800">
+                    Credits: {creditsRemaining}
+                  </span>
+                </div>
+              )}
               <span className="text-sm text-gray-700">
                 Welcome, {user?.first_name} {user?.last_name}
               </span>
