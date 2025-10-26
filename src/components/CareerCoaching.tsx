@@ -32,10 +32,38 @@ interface Course {
   link: string;
 }
 
+interface Blog {
+  title: string;
+  description: string;
+  link: string;
+}
+
+interface Repository {
+  title: string;
+  description: string;
+  link: string;
+}
+
+interface Project {
+  title: string;
+  description: string;
+}
+
+interface CareerLevel {
+  current_level: string;
+  target_level: string;
+  insight: string;
+}
+
 interface CareerRecommendationResult {
   career_paths: string[];
+  career_level: CareerLevel;
   recommended_courses: Course[];
+  recommended_blogs: Blog[];
+  recommended_repos: Repository[];
+  recommended_projects: Project[];
   advice: string;
+  next_steps: string[];
 }
 
 interface CareerCoachingProps {
@@ -329,12 +357,31 @@ const CareerCoaching: React.FC<CareerCoachingProps> = ({ onBack }) => {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Career Recommendations</h2>
             
+            {/* Career Level Analysis */}
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-6">
+              <h3 className="text-lg font-semibold text-blue-900 mb-4">🎯 Career Level Analysis</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 mb-2">Current Level</h4>
+                  <p className="text-blue-600 font-semibold">{careerRecommendation.career_level.current_level}</p>
+                </div>
+                <div className="bg-white rounded-lg p-4">
+                  <h4 className="font-medium text-gray-900 mb-2">Target Level</h4>
+                  <p className="text-green-600 font-semibold">{careerRecommendation.career_level.target_level}</p>
+                </div>
+              </div>
+              <div className="mt-4 bg-white rounded-lg p-4">
+                <h4 className="font-medium text-gray-900 mb-2">Insight</h4>
+                <p className="text-gray-700">{careerRecommendation.career_level.insight}</p>
+              </div>
+            </div>
+
             {/* Career Paths */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recommended Career Paths</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">🚀 Recommended Career Paths</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {careerRecommendation.career_paths.map((path, index) => (
-                  <div key={index} className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div key={index} className="bg-blue-50 border border-blue-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                     <div className="flex items-center">
                       <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
                         <span className="text-white font-bold text-sm">{index + 1}</span>
@@ -346,9 +393,26 @@ const CareerCoaching: React.FC<CareerCoachingProps> = ({ onBack }) => {
               </div>
             </div>
 
+            {/* Next Steps */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">📋 Next Steps</h3>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <ul className="space-y-2">
+                  {careerRecommendation.next_steps.map((step, index) => (
+                    <li key={index} className="flex items-start">
+                      <span className="flex-shrink-0 w-6 h-6 bg-green-600 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                        <span className="text-white text-xs font-bold">{index + 1}</span>
+                      </span>
+                      <span className="text-green-800">{step}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
             {/* Recommended Courses */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Recommended Courses</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">📚 Recommended Courses</h3>
               <div className="space-y-4">
                 {careerRecommendation.recommended_courses.map((course, index) => (
                   <div key={index} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -365,6 +429,72 @@ const CareerCoaching: React.FC<CareerCoachingProps> = ({ onBack }) => {
                       >
                         View Course
                       </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Recommended Blogs */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">📖 Recommended Blogs</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {careerRecommendation.recommended_blogs.map((blog, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <h4 className="font-medium text-gray-900 mb-2">{blog.title}</h4>
+                    <p className="text-sm text-gray-600 mb-3">{blog.description}</p>
+                    <a
+                      href={blog.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    >
+                      Read Blog →
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Recommended Repositories */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">💻 Recommended Repositories</h3>
+              <div className="space-y-4">
+                {careerRecommendation.recommended_repos.map((repo, index) => (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900 mb-1">{repo.title}</h4>
+                        <p className="text-sm text-gray-600 mb-2">{repo.description}</p>
+                      </div>
+                      <a
+                        href={repo.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-4 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md text-sm font-medium transition-colors"
+                      >
+                        View Repo
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Recommended Projects */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">🛠️ Recommended Projects</h3>
+              <div className="space-y-4">
+                {careerRecommendation.recommended_projects.map((project, index) => (
+                  <div key={index} className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                    <div className="flex items-start">
+                      <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                        <span className="text-white font-bold text-sm">{index + 1}</span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-purple-900 mb-2">{project.title}</h4>
+                        <p className="text-purple-700 text-sm">{project.description}</p>
+                      </div>
                     </div>
                   </div>
                 ))}
