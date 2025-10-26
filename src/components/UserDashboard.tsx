@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import PortfolioBuilder from './PortfolioBuilder';
 import ResumeGenerator from './ResumeGenerator';
+import CoverLetterWriter from './CoverLetterWriter';
 
 const UserDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer'>('dashboard');
 
   if (currentView === 'portfolio-builder') {
     return <PortfolioBuilder onBack={() => setCurrentView('dashboard')} />;
@@ -13,6 +14,10 @@ const UserDashboard: React.FC = () => {
 
   if (currentView === 'resume-generator') {
     return <ResumeGenerator onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'cover-letter-writer') {
+    return <CoverLetterWriter onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -127,7 +132,10 @@ const UserDashboard: React.FC = () => {
                 </div>
                 <div className="bg-gray-50 px-5 py-3">
                   <div className="text-sm">
-                    <button className="text-purple-600 hover:text-purple-500 font-medium">
+                    <button 
+                      onClick={() => setCurrentView('cover-letter-writer')}
+                      className="text-purple-600 hover:text-purple-500 font-medium"
+                    >
                       Create Cover Letter →
                     </button>
                   </div>

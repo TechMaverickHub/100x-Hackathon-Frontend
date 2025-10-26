@@ -7,5 +7,6 @@ export const API_ENDPOINTS = {
   PORTFOLIO_GENERATE_FROM_RESUME: 'portfolio/generate-from-resume',
   PORTFOLIO_GENERATE_FROM_QNA: 'portfolio/generate-from-qna',
   RESUME_GENERATE: 'resume/generate',
+  COVER_LETTER_GENERATE: 'cover-letter/generate',
   // Add more endpoints as needed
 };
