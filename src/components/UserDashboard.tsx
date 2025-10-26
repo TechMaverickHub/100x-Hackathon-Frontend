@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import PortfolioBuilder from './PortfolioBuilder';
+import ResumeGenerator from './ResumeGenerator';
 
 const UserDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator'>('dashboard');
 
   if (currentView === 'portfolio-builder') {
     return <PortfolioBuilder onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'resume-generator') {
+    return <ResumeGenerator onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -92,7 +97,10 @@ const UserDashboard: React.FC = () => {
                 </div>
                 <div className="bg-gray-50 px-5 py-3">
                   <div className="text-sm">
-                    <button className="text-green-600 hover:text-green-500 font-medium">
+                    <button 
+                      onClick={() => setCurrentView('resume-generator')}
+                      className="text-green-600 hover:text-green-500 font-medium"
+                    >
                       Generate Resume →
                     </button>
                   </div>
