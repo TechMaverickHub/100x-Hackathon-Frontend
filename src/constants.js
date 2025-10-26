@@ -21,5 +21,8 @@ export const API_ENDPOINTS = {
   JOB_SOURCE_GET: 'job-source',
   JOB_SOURCE_UPDATE: 'job-source',
   JOB_SOURCE_DELETE: 'job-source',
+  JOB_SOURCE_LIST: 'job-source/list',
+  JOB_SOURCE_USER_SELECTION: 'job-source/user-selection',
+  JOB_SOURCE_UPDATE_SELECTION: 'job-source/update-selection',
   // Add more endpoints as needed
 };
