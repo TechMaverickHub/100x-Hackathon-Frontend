@@ -8,5 +8,8 @@ export const API_ENDPOINTS = {
   PORTFOLIO_GENERATE_FROM_QNA: 'portfolio/generate-from-qna',
   RESUME_GENERATE: 'resume/generate',
   COVER_LETTER_GENERATE: 'cover-letter/generate',
+  RESUME_SCORE: 'resume/score',
+  RESUME_KEYWORDS: 'resume/keyword-gap',
+  RESUME_AUTO_REWRITE: 'resume/auto-rewrite',
   // Add more endpoints as needed
 };

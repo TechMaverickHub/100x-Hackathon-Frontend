@@ -3,10 +3,11 @@ import { useAuth } from '../contexts/AuthContext';
 import PortfolioBuilder from './PortfolioBuilder';
 import ResumeGenerator from './ResumeGenerator';
 import CoverLetterWriter from './CoverLetterWriter';
+import ResumeOptimizer from './ResumeOptimizer';
 
 const UserDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer'>('dashboard');
 
   if (currentView === 'portfolio-builder') {
     return <PortfolioBuilder onBack={() => setCurrentView('dashboard')} />;
@@ -18,6 +19,10 @@ const UserDashboard: React.FC = () => {
 
   if (currentView === 'cover-letter-writer') {
     return <CoverLetterWriter onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'resume-optimizer') {
+    return <ResumeOptimizer onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -191,6 +196,36 @@ const UserDashboard: React.FC = () => {
                   <div className="text-sm">
                     <button className="text-red-600 hover:text-red-500 font-medium">
                       Start Interview →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 bg-orange-500 rounded-md flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">Resume Optimizer</dt>
+                        <dd className="text-lg font-medium text-gray-900">Optimize Resume</dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 px-5 py-3">
+                  <div className="text-sm">
+                    <button 
+                      onClick={() => setCurrentView('resume-optimizer')}
+                      className="text-orange-600 hover:text-orange-500 font-medium"
+                    >
+                      Optimize Resume →
                     </button>
                   </div>
                 </div>
