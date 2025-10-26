@@ -26,20 +26,52 @@ interface PortfolioResponse {
   };
 }
 
+interface TechnicalSkill {
+  skill: string;
+  weight: number;
+}
+
+interface SoftSkill {
+  skill: string;
+}
+
+interface Skills {
+  technical: TechnicalSkill[];
+  soft: SoftSkill[];
+}
+
+interface Project {
+  title: string;
+  desc: string;
+  link: string;
+}
+
+interface Experience {
+  role: string;
+  company: string;
+  duration: string;
+  desc: string;
+}
+
+interface Education {
+  degree: string;
+  institution: string;
+  year: string;
+}
+
 interface QnAFormData {
   name: string;
   role: string;
   tagline: string;
   bio: string;
-  skills: string[];
-  projects: Array<{
-    title: string;
-    desc: string;
-    link: string;
-  }>;
+  skills: Skills;
+  projects: Project[];
+  experience: Experience[];
+  education: Education[];
   email: string;
   linkedin: string;
   github: string;
+  twitter: string;
 }
 
 interface PortfolioBuilderProps {
@@ -58,11 +90,17 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
     role: '',
     tagline: '',
     bio: '',
-    skills: [],
+    skills: {
+      technical: [],
+      soft: []
+    },
     projects: [],
+    experience: [],
+    education: [],
     email: '',
     linkedin: '',
-    github: ''
+    github: '',
+    twitter: ''
   });
 
   useEffect(() => {
@@ -107,24 +145,67 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
     }
   };
 
-  const addSkill = () => {
+  const addTechnicalSkill = () => {
     setQnaFormData(prev => ({
       ...prev,
-      skills: [...prev.skills, '']
+      skills: {
+        ...prev.skills,
+        technical: [...prev.skills.technical, { skill: '', weight: 5 }]
+      }
     }));
   };
 
-  const updateSkill = (index: number, value: string) => {
+  const updateTechnicalSkill = (index: number, field: 'skill' | 'weight', value: string | number) => {
     setQnaFormData(prev => ({
       ...prev,
-      skills: prev.skills.map((skill, i) => i === index ? value : skill)
+      skills: {
+        ...prev.skills,
+        technical: prev.skills.technical.map((skill, i) => 
+          i === index ? { ...skill, [field]: value } : skill
+        )
+      }
     }));
   };
 
-  const removeSkill = (index: number) => {
+  const removeTechnicalSkill = (index: number) => {
     setQnaFormData(prev => ({
       ...prev,
-      skills: prev.skills.filter((_, i) => i !== index)
+      skills: {
+        ...prev.skills,
+        technical: prev.skills.technical.filter((_, i) => i !== index)
+      }
+    }));
+  };
+
+  const addSoftSkill = () => {
+    setQnaFormData(prev => ({
+      ...prev,
+      skills: {
+        ...prev.skills,
+        soft: [...prev.skills.soft, { skill: '' }]
+      }
+    }));
+  };
+
+  const updateSoftSkill = (index: number, value: string) => {
+    setQnaFormData(prev => ({
+      ...prev,
+      skills: {
+        ...prev.skills,
+        soft: prev.skills.soft.map((skill, i) => 
+          i === index ? { ...skill, skill: value } : skill
+        )
+      }
+    }));
+  };
+
+  const removeSoftSkill = (index: number) => {
+    setQnaFormData(prev => ({
+      ...prev,
+      skills: {
+        ...prev.skills,
+        soft: prev.skills.soft.filter((_, i) => i !== index)
+      }
     }));
   };
 
@@ -148,6 +229,52 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
     setQnaFormData(prev => ({
       ...prev,
       projects: prev.projects.filter((_, i) => i !== index)
+    }));
+  };
+
+  const addExperience = () => {
+    setQnaFormData(prev => ({
+      ...prev,
+      experience: [...prev.experience, { role: '', company: '', duration: '', desc: '' }]
+    }));
+  };
+
+  const updateExperience = (index: number, field: string, value: string) => {
+    setQnaFormData(prev => ({
+      ...prev,
+      experience: prev.experience.map((exp, i) => 
+        i === index ? { ...exp, [field]: value } : exp
+      )
+    }));
+  };
+
+  const removeExperience = (index: number) => {
+    setQnaFormData(prev => ({
+      ...prev,
+      experience: prev.experience.filter((_, i) => i !== index)
+    }));
+  };
+
+  const addEducation = () => {
+    setQnaFormData(prev => ({
+      ...prev,
+      education: [...prev.education, { degree: '', institution: '', year: '' }]
+    }));
+  };
+
+  const updateEducation = (index: number, field: string, value: string) => {
+    setQnaFormData(prev => ({
+      ...prev,
+      education: prev.education.map((edu, i) => 
+        i === index ? { ...edu, [field]: value } : edu
+      )
+    }));
+  };
+
+  const removeEducation = (index: number) => {
+    setQnaFormData(prev => ({
+      ...prev,
+      education: prev.education.filter((_, i) => i !== index)
     }));
   };
 
@@ -326,19 +453,31 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
                   />
                 </div>
                 
+                {/* Technical Skills */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Skills</label>
-                  {qnaFormData.skills.map((skill, index) => (
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Technical Skills</h3>
+                  {qnaFormData.skills.technical.map((skill, index) => (
                     <div key={index} className="flex gap-2 mb-2">
                       <input
                         type="text"
-                        value={skill}
-                        onChange={(e) => updateSkill(index, e.target.value)}
+                        value={skill.skill}
+                        onChange={(e) => updateTechnicalSkill(index, 'skill', e.target.value)}
                         className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="Skill name"
                       />
+                      <select
+                        value={skill.weight}
+                        onChange={(e) => updateTechnicalSkill(index, 'weight', parseInt(e.target.value))}
+                        className="w-20 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      >
+                        <option value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                        <option value={4}>4</option>
+                        <option value={5}>5</option>
+                      </select>
                       <button
-                        onClick={() => removeSkill(index)}
+                        onClick={() => removeTechnicalSkill(index)}
                         className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                       >
                         Remove
@@ -346,10 +485,38 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
                     </div>
                   ))}
                   <button
-                    onClick={addSkill}
+                    onClick={addTechnicalSkill}
                     className="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600"
                   >
-                    Add Skill
+                    Add Technical Skill
+                  </button>
+                </div>
+
+                {/* Soft Skills */}
+                <div className="md:col-span-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Soft Skills</h3>
+                  {qnaFormData.skills.soft.map((skill, index) => (
+                    <div key={index} className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={skill.skill}
+                        onChange={(e) => updateSoftSkill(index, e.target.value)}
+                        className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="Skill name"
+                      />
+                      <button
+                        onClick={() => removeSoftSkill(index)}
+                        className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={addSoftSkill}
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600"
+                  >
+                    Add Soft Skill
                   </button>
                 </div>
                 
@@ -404,6 +571,122 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
                     Add Project
                   </button>
                 </div>
+
+                {/* Experience */}
+                <div className="md:col-span-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Experience</h3>
+                  {qnaFormData.experience.map((exp, index) => (
+                    <div key={index} className="border border-gray-200 rounded-md p-4 mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                          <input
+                            type="text"
+                            value={exp.role}
+                            onChange={(e) => updateExperience(index, 'role', e.target.value)}
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="Job title"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                          <input
+                            type="text"
+                            value={exp.company}
+                            onChange={(e) => updateExperience(index, 'company', e.target.value)}
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="Company name"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+                          <input
+                            type="text"
+                            value={exp.duration}
+                            onChange={(e) => updateExperience(index, 'duration', e.target.value)}
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="e.g., 2023-2025"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                          <textarea
+                            value={exp.desc}
+                            onChange={(e) => updateExperience(index, 'desc', e.target.value)}
+                            rows={2}
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="Job description"
+                          />
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeExperience(index)}
+                        className="mt-2 px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm"
+                      >
+                        Remove Experience
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={addExperience}
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600"
+                  >
+                    Add Experience
+                  </button>
+                </div>
+
+                {/* Education */}
+                <div className="md:col-span-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Education</h3>
+                  {qnaFormData.education.map((edu, index) => (
+                    <div key={index} className="border border-gray-200 rounded-md p-4 mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Degree</label>
+                          <input
+                            type="text"
+                            value={edu.degree}
+                            onChange={(e) => updateEducation(index, 'degree', e.target.value)}
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="e.g., M.Tech CS"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Institution</label>
+                          <input
+                            type="text"
+                            value={edu.institution}
+                            onChange={(e) => updateEducation(index, 'institution', e.target.value)}
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="e.g., IIT XYZ"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                          <input
+                            type="text"
+                            value={edu.year}
+                            onChange={(e) => updateEducation(index, 'year', e.target.value)}
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="e.g., 2023"
+                          />
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => removeEducation(index)}
+                        className="mt-2 px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm"
+                      >
+                        Remove Education
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={addEducation}
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600"
+                  >
+                    Add Education
+                  </button>
+                </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
@@ -435,6 +718,17 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
                     onChange={(e) => setQnaFormData(prev => ({ ...prev, github: e.target.value }))}
                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     placeholder="https://github.com/yourusername"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Twitter</label>
+                  <input
+                    type="url"
+                    value={qnaFormData.twitter}
+                    onChange={(e) => setQnaFormData(prev => ({ ...prev, twitter: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="https://x.com/yourusername"
                   />
                 </div>
               </div>
