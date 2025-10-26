@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { BASE_URL, API_ENDPOINTS } from '../constants';
+import { API_ENDPOINTS } from '../constants';
 import api from '../services/api';
 
 interface UserProfile {
@@ -18,13 +18,6 @@ interface UserProfile {
   resume_file: string | null;
 }
 
-interface PortfolioResponse {
-  message: string;
-  status: number;
-  results: {
-    html: string;
-  };
-}
 
 interface TechnicalSkill {
   skill: string;
@@ -79,12 +72,13 @@ interface PortfolioBuilderProps {
 }
 
 const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
-  const { user, accessToken } = useAuth();
+  const { user } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'resume' | 'qna' | null>(null);
   const [generatedHtml, setGeneratedHtml] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const [qnaFormData, setQnaFormData] = useState<QnAFormData>({
     name: '',
     role: '',
@@ -107,11 +101,22 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
     fetchUserProfile();
   }, []);
 
+
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
       const response = await api.get(`/${API_ENDPOINTS.USER_ME}`);
-      setUserProfile(response.data.results);
+      const userData = response.data.results;
+      setUserProfile(userData);
+      
+      // Prefill form data with user profile information
+      setQnaFormData(prev => ({
+        ...prev,
+        name: `${userData.first_name || ''} ${userData.last_name || ''}`.trim(),
+        email: userData.email || '',
+        linkedin: userData.linkedin_url || '',
+        github: userData.github_url || ''
+      }));
     } catch (error) {
       console.error('Failed to fetch user profile:', error);
     } finally {
@@ -276,6 +281,37 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
       ...prev,
       education: prev.education.filter((_, i) => i !== index)
     }));
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedHtml);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = generatedHtml;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    }
+  };
+
+  const downloadHTML = () => {
+    const blob = new Blob([generatedHtml], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'portfolio.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   };
 
   if (loading) {
@@ -754,19 +790,50 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
           {/* Generated HTML Display */}
           {generatedHtml && (
             <div className="mt-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Generated Portfolio</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">Generated Portfolio</h2>
+                <div className="flex gap-2">
+                  <button
+                    onClick={copyToClipboard}
+                    className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                      copySuccess 
+                        ? 'bg-green-600 text-white' 
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                  >
+                    {copySuccess ? '✓ Copied!' : 'Copy HTML'}
+                  </button>
+                  <button
+                    onClick={downloadHTML}
+                    className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md font-medium transition-colors"
+                  >
+                    Download HTML
+                  </button>
+                </div>
+              </div>
+              
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* HTML Code */}
                 <div className="bg-gray-900 rounded-lg p-4">
-                  <h3 className="text-white font-medium mb-3">HTML Code</h3>
-                  <pre className="text-green-400 text-sm overflow-auto max-h-96">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-white font-medium">HTML Code</h3>
+                    <span className="text-gray-400 text-sm">
+                      {generatedHtml.split('\n').length} lines
+                    </span>
+                  </div>
+                  <pre className="text-green-400 text-sm overflow-auto max-h-96 bg-black rounded p-3">
                     <code>{generatedHtml}</code>
                   </pre>
                 </div>
                 
                 {/* Preview */}
                 <div className="bg-white rounded-lg border p-4">
-                  <h3 className="text-gray-900 font-medium mb-3">Preview</h3>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-gray-900 font-medium">Preview</h3>
+                    <span className="text-gray-400 text-sm">
+                      Live preview
+                    </span>
+                  </div>
                   <div className="border rounded-lg overflow-hidden">
                     <iframe
                       srcDoc={generatedHtml}
