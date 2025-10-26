@@ -77,7 +77,7 @@ const CareerCoaching: React.FC<CareerCoachingProps> = ({ onBack }) => {
   const [careerRecommendation, setCareerRecommendation] = useState<CareerRecommendationResult | null>(null);
   const [isAnalyzingSkills, setIsAnalyzingSkills] = useState(false);
   const [isGeneratingRecommendations, setIsGeneratingRecommendations] = useState(false);
-  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [activeAnalysis, setActiveAnalysis] = useState<'skills' | 'career' | null>(null);
 
   const analyzeSkillsGap = async () => {
     if (!jobDescription.trim()) {
@@ -92,7 +92,7 @@ const CareerCoaching: React.FC<CareerCoachingProps> = ({ onBack }) => {
       });
       
       setSkillsGapResult(response.data.results);
-      setShowRecommendations(false);
+      setActiveAnalysis('skills');
       setCareerRecommendation(null);
     } catch (error) {
       console.error('Failed to analyze skills gap:', error);
@@ -115,7 +115,8 @@ const CareerCoaching: React.FC<CareerCoachingProps> = ({ onBack }) => {
       });
       
       setCareerRecommendation(response.data.results);
-      setShowRecommendations(true);
+      setActiveAnalysis('career');
+      setSkillsGapResult(null);
     } catch (error) {
       console.error('Failed to generate career recommendations:', error);
       alert('Failed to generate career recommendations. Please try again.');
@@ -232,7 +233,7 @@ const CareerCoaching: React.FC<CareerCoachingProps> = ({ onBack }) => {
         </div>
 
         {/* Skills Gap Analysis Results */}
-        {skillsGapResult && (
+        {activeAnalysis === 'skills' && skillsGapResult && (
           <div className="bg-white rounded-lg shadow p-6 mb-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Skills Gap Analysis</h2>
             
@@ -353,7 +354,7 @@ const CareerCoaching: React.FC<CareerCoachingProps> = ({ onBack }) => {
         )}
 
         {/* Career Recommendations Results */}
-        {showRecommendations && careerRecommendation && (
+        {activeAnalysis === 'career' && careerRecommendation && (
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Career Recommendations</h2>
             
