@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import PortfolioBuilder from './PortfolioBuilder';
 
 const UserDashboard: React.FC = () => {
   const { user, logout } = useAuth();
+  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder'>('dashboard');
+
+  if (currentView === 'portfolio-builder') {
+    return <PortfolioBuilder onBack={() => setCurrentView('dashboard')} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -56,7 +62,10 @@ const UserDashboard: React.FC = () => {
                 </div>
                 <div className="bg-gray-50 px-5 py-3">
                   <div className="text-sm">
-                    <button className="text-indigo-600 hover:text-indigo-500 font-medium">
+                    <button 
+                      onClick={() => setCurrentView('portfolio-builder')}
+                      className="text-indigo-600 hover:text-indigo-500 font-medium"
+                    >
                       Create Portfolio →
                     </button>
                   </div>
