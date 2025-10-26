@@ -46,10 +46,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAccessToken(results.access);
       setRefreshToken(results.refresh);
       
-      // Store in localStorage
+      // Store tokens in localStorage
       localStorage.setItem('accessToken', results.access);
       localStorage.setItem('refreshToken', results.refresh);
       localStorage.setItem('user', JSON.stringify(results.user));
+      
+      // Store specific user data fields in localStorage
+      localStorage.setItem('first_name', results.user.first_name);
+      localStorage.setItem('last_name', results.user.last_name);
+      localStorage.setItem('email', results.user.email);
+      localStorage.setItem('role_id', results.user.role.pk);
+      localStorage.setItem('role_name', results.user.role.name);
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -94,9 +101,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     setAccessToken(null);
     setRefreshToken(null);
+    
+    // Clear all localStorage items
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
+    localStorage.removeItem('first_name');
+    localStorage.removeItem('last_name');
+    localStorage.removeItem('email');
+    localStorage.removeItem('role_id');
+    localStorage.removeItem('role_name');
   };
 
   const value: AuthContextType = {
