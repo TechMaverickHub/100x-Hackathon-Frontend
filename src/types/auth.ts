@@ -8,6 +8,9 @@ export interface User {
     pk: number;
     name: string;
   };
+  linkedin_url?: string;
+  github_url?: string;
+  resume_file?: string | null;
 }
 
 export interface LoginResponse {
@@ -42,6 +45,7 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => void;
+  setUser: (user: User | null) => void;
   isAuthenticated: boolean;
   isLoading: boolean;
 }

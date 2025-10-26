@@ -6,10 +6,11 @@ import CoverLetterWriter from './CoverLetterWriter';
 import ResumeOptimizer from './ResumeOptimizer';
 import MockInterview from './MockInterview';
 import CareerCoaching from './CareerCoaching';
+import ProfileEdit from './ProfileEdit';
 
 const UserDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer' | 'mock-interview' | 'career-coaching'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer' | 'mock-interview' | 'career-coaching' | 'profile-edit'>('dashboard');
 
   if (currentView === 'portfolio-builder') {
     return <PortfolioBuilder onBack={() => setCurrentView('dashboard')} />;
@@ -35,6 +36,10 @@ const UserDashboard: React.FC = () => {
     return <CareerCoaching onBack={() => setCurrentView('dashboard')} />;
   }
 
+  if (currentView === 'profile-edit') {
+    return <ProfileEdit onBack={() => setCurrentView('dashboard')} />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -48,6 +53,12 @@ const UserDashboard: React.FC = () => {
               <span className="text-sm text-gray-700">
                 Welcome, {user?.first_name} {user?.last_name}
               </span>
+              <button
+                onClick={() => setCurrentView('profile-edit')}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              >
+                Edit Profile
+              </button>
               <button
                 onClick={logout}
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
