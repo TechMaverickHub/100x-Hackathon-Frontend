@@ -50,7 +50,7 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
   const { user, accessToken } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'resume' | 'qna'>('resume');
+  const [activeTab, setActiveTab] = useState<'resume' | 'qna' | null>(null);
   const [generatedHtml, setGeneratedHtml] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [qnaFormData, setQnaFormData] = useState<QnAFormData>({
@@ -190,69 +190,93 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
         </div>
       </header>
 
-      <div className="flex">
-        {/* Left Sidebar */}
-        <div className="w-80 bg-white shadow-lg min-h-screen">
-          <div className="p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Portfolio Generation Options</h2>
-            
-            {/* Resume-based Generation */}
-            <div className="mb-8">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {!activeTab && (
+            <div className="bg-white rounded-lg shadow p-8 text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Choose Your Portfolio Generation Method</h2>
+              <p className="text-gray-600 mb-8">Select how you'd like to generate your portfolio</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <div className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                  <div className="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Generate from Resume</h3>
+                  <p className="text-gray-600 mb-4">AI will analyze your resume and create a professional portfolio automatically</p>
+                  {userProfile?.resume_file ? (
+                    <button
+                      onClick={() => setActiveTab('resume')}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                    >
+                      Use Resume
+                    </button>
+                  ) : (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+                      <p className="text-sm text-yellow-800">
+                        No resume file found. Please upload a resume first.
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">Generate from Resume</h3>
-                  <p className="text-sm text-gray-500">AI-powered portfolio from your resume</p>
+                
+                <div className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                  <div className="w-16 h-16 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Generate from Q&A</h3>
+                  <p className="text-gray-600 mb-4">Answer questions to create a custom portfolio tailored to your needs</p>
+                  <button
+                    onClick={() => setActiveTab('qna')}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                  >
+                    Start Q&A Process
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'resume' && (
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Generate Portfolio from Resume</h2>
+              <p className="text-gray-600 mb-6">
+                Your resume file has been detected. Click the button below to generate your portfolio automatically.
+              </p>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mb-6">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-blue-800 text-sm">
+                    AI will analyze your resume and create a professional portfolio with sections for about, skills, projects, and contact information.
+                  </p>
                 </div>
               </div>
               
-              {userProfile?.resume_file ? (
+              <div className="flex gap-4">
                 <button
                   onClick={generateFromResume}
                   disabled={isGenerating}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-2 rounded-md font-medium transition-colors"
                 >
                   {isGenerating ? 'Generating...' : 'Generate Portfolio'}
                 </button>
-              ) : (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-                  <p className="text-sm text-yellow-800">
-                    No resume file found. Please upload a resume first to use this option.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Q&A-based Generation */}
-            <div>
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900">Generate from Q&A</h3>
-                  <p className="text-sm text-gray-500">Custom portfolio through questions</p>
-                </div>
+                <button
+                  onClick={() => setActiveTab(null)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors"
+                >
+                  Back to Options
+                </button>
               </div>
-              
-              <button
-                onClick={() => setActiveTab('qna')}
-                className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
-              >
-                Start Q&A Process
-              </button>
             </div>
-          </div>
-        </div>
+          )}
 
-        {/* Main Content */}
-        <div className="flex-1 p-6">
           {activeTab === 'qna' && (
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Portfolio Information</h2>
@@ -424,10 +448,10 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
                   {isGenerating ? 'Generating...' : 'Generate Portfolio'}
                 </button>
                 <button
-                  onClick={() => setActiveTab('resume')}
+                  onClick={() => setActiveTab(null)}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors"
                 >
-                  Back to Resume Option
+                  Back to Options
                 </button>
               </div>
             </div>
@@ -460,7 +484,6 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
               </div>
             </div>
           )}
-        </div>
       </div>
     </div>
   );
