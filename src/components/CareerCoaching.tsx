@@ -7,6 +7,23 @@ interface SkillsGapResult {
   matched_skills: string[];
   missing_skills: string[];
   gap_score: number;
+  match_percent: number;
+  summary: string;
+  comparative_insight: {
+    average_match_percent_for_role: number;
+    market_position: string;
+    insight: string;
+  };
+  trend_insight: {
+    emerging_skills: string[];
+    high_demand_skills: string[];
+    insight: string;
+  };
+  visual_summary: {
+    show_progress_bar: boolean;
+    color_code: string;
+    label: string;
+  };
 }
 
 interface Course {
@@ -79,26 +96,43 @@ const CareerCoaching: React.FC<CareerCoachingProps> = ({ onBack }) => {
     }
   };
 
-  const getGapScoreColor = (score: number) => {
-    if (score <= 0.3) return 'text-green-600';
-    if (score <= 0.6) return 'text-yellow-600';
-    return 'text-red-600';
+  const getVisualSummaryColor = (colorCode: string) => {
+    switch (colorCode.toLowerCase()) {
+      case 'success':
+        return 'text-green-600';
+      case 'warning':
+        return 'text-yellow-600';
+      case 'danger':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
+    }
   };
 
-  const getGapScoreBgColor = (score: number) => {
-    if (score <= 0.3) return 'bg-green-100';
-    if (score <= 0.6) return 'bg-yellow-100';
-    return 'bg-red-100';
+  const getVisualSummaryBgColor = (colorCode: string) => {
+    switch (colorCode.toLowerCase()) {
+      case 'success':
+        return 'bg-green-100';
+      case 'warning':
+        return 'bg-yellow-100';
+      case 'danger':
+        return 'bg-red-100';
+      default:
+        return 'bg-gray-100';
+    }
   };
 
-  const getGapScoreBarColor = (score: number) => {
-    if (score <= 0.3) return 'bg-green-500';
-    if (score <= 0.6) return 'bg-yellow-500';
-    return 'bg-red-500';
-  };
-
-  const formatGapScore = (score: number) => {
-    return Math.round(score * 100);
+  const getVisualSummaryBarColor = (colorCode: string) => {
+    switch (colorCode.toLowerCase()) {
+      case 'success':
+        return 'bg-green-500';
+      case 'warning':
+        return 'bg-yellow-500';
+      case 'danger':
+        return 'bg-red-500';
+      default:
+        return 'bg-gray-500';
+    }
   };
 
   return (
@@ -174,29 +208,82 @@ const CareerCoaching: React.FC<CareerCoachingProps> = ({ onBack }) => {
           <div className="bg-white rounded-lg shadow p-6 mb-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Skills Gap Analysis</h2>
             
-            {/* Gap Score Meter */}
-            <div className={`${getGapScoreBgColor(skillsGapResult.gap_score)} rounded-lg p-6 text-center mb-6`}>
+            {/* Visual Summary */}
+            <div className={`${getVisualSummaryBgColor(skillsGapResult.visual_summary.color_code)} rounded-lg p-6 text-center mb-6`}>
               <div className="mb-4">
-                <div className="text-sm font-medium text-gray-600 mb-2">Skills Gap Score</div>
-                <div className={`text-4xl font-bold ${getGapScoreColor(skillsGapResult.gap_score)} mb-2`}>
-                  {formatGapScore(skillsGapResult.gap_score)}%
+                <div className="text-sm font-medium text-gray-600 mb-2">Skill Match</div>
+                <div className={`text-4xl font-bold ${getVisualSummaryColor(skillsGapResult.visual_summary.color_code)} mb-2`}>
+                  {skillsGapResult.match_percent}%
                 </div>
-                <p className="text-sm text-gray-600">
-                  {skillsGapResult.gap_score <= 0.3 ? 'Excellent Match!' : 
-                   skillsGapResult.gap_score <= 0.6 ? 'Good Match' : 'Significant Gap'}
+                <p className="text-sm text-gray-600 mb-4">
+                  {skillsGapResult.summary}
                 </p>
               </div>
               
               {/* Progress Bar */}
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div
-                  className={`${getGapScoreBarColor(skillsGapResult.gap_score)} h-3 rounded-full transition-all duration-500`}
-                  style={{ width: `${formatGapScore(skillsGapResult.gap_score)}%` }}
-                ></div>
-              </div>
+              {skillsGapResult.visual_summary.show_progress_bar && (
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div
+                    className={`${getVisualSummaryBarColor(skillsGapResult.visual_summary.color_code)} h-3 rounded-full transition-all duration-500`}
+                    style={{ width: `${skillsGapResult.match_percent}%` }}
+                  ></div>
+                </div>
+              )}
               <p className="text-xs text-gray-500 mt-2">
-                Lower score = Better match
+                {skillsGapResult.visual_summary.label}
               </p>
+            </div>
+
+            {/* Summary and Insights */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              {/* Comparative Insight */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-800 mb-3">📊 Market Position</h4>
+                <div className="space-y-2">
+                  <p className="text-blue-700 text-sm">
+                    <strong>Your Match:</strong> {skillsGapResult.match_percent}%
+                  </p>
+                  <p className="text-blue-700 text-sm">
+                    <strong>Average for Role:</strong> {skillsGapResult.comparative_insight.average_match_percent_for_role}%
+                  </p>
+                  <p className="text-blue-700 text-sm">
+                    <strong>Position:</strong> {skillsGapResult.comparative_insight.market_position}
+                  </p>
+                  <p className="text-blue-700 text-sm mt-2">
+                    {skillsGapResult.comparative_insight.insight}
+                  </p>
+                </div>
+              </div>
+
+              {/* Trend Insight */}
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <h4 className="font-semibold text-purple-800 mb-3">📈 Market Trends</h4>
+                <div className="space-y-2">
+                  <div>
+                    <p className="text-purple-700 text-sm font-medium mb-1">Emerging Skills:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {skillsGapResult.trend_insight.emerging_skills.map((skill, index) => (
+                        <span key={index} className="bg-purple-200 text-purple-800 px-2 py-1 rounded text-xs">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-purple-700 text-sm font-medium mb-1">High Demand:</p>
+                    <div className="flex flex-wrap gap-1">
+                      {skillsGapResult.trend_insight.high_demand_skills.map((skill, index) => (
+                        <span key={index} className="bg-purple-200 text-purple-800 px-2 py-1 rounded text-xs">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-purple-700 text-sm mt-2">
+                    {skillsGapResult.trend_insight.insight}
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
