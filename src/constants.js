@@ -16,5 +16,10 @@ export const API_ENDPOINTS = {
   RESUME_SKILLS_GAP: 'resume/skills-gap',
   RESUME_CAREER_RECOMMENDATION: 'resume/generate_career-recommendation',
   USER_LIST_FILTER: 'user/list-filter',
+  JOB_SOURCE_CREATE: 'job-source/',
+  JOB_SOURCE_LIST_FILTER: 'job-source/list-filter',
+  JOB_SOURCE_GET: 'job-source',
+  JOB_SOURCE_UPDATE: 'job-source',
+  JOB_SOURCE_DELETE: 'job-source',
   // Add more endpoints as needed
 };

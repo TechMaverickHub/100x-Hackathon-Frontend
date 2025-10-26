@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import UserManagement from './UserManagement';
+import JobSourceManagement from './JobSourceManagement';
 
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'user-management'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'user-management' | 'job-source-management'>('dashboard');
 
   if (currentView === 'user-management') {
     return <UserManagement onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'job-source-management') {
+    return <JobSourceManagement onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -153,6 +158,36 @@ const AdminDashboard: React.FC = () => {
                       className="text-indigo-600 hover:text-indigo-500 font-medium"
                     >
                       View All Users →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 bg-orange-500 rounded-md flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">Job Source Management</dt>
+                        <dd className="text-lg font-medium text-gray-900">Manage Job Sources</dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 px-5 py-3">
+                  <div className="text-sm">
+                    <button 
+                      onClick={() => setCurrentView('job-source-management')}
+                      className="text-orange-600 hover:text-orange-500 font-medium"
+                    >
+                      Manage Job Sources →
                     </button>
                   </div>
                 </div>
