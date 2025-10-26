@@ -8,12 +8,13 @@ import MockInterview from './MockInterview';
 import CareerCoaching from './CareerCoaching';
 import ProfileEdit from './ProfileEdit';
 import JobSourceSelection from './JobSourceSelection';
+import SubscriptionPage from './SubscriptionPage';
 import api from '../services/api';
 import { API_ENDPOINTS } from '../constants';
 
 const UserDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer' | 'mock-interview' | 'career-coaching' | 'profile-edit' | 'job-source-selection'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'portfolio-builder' | 'resume-generator' | 'cover-letter-writer' | 'resume-optimizer' | 'mock-interview' | 'career-coaching' | 'profile-edit' | 'job-source-selection' | 'subscription'>('dashboard');
   const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
 
   useEffect(() => {
@@ -59,6 +60,10 @@ const UserDashboard: React.FC = () => {
 
   if (currentView === 'job-source-selection') {
     return <JobSourceSelection onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'subscription') {
+    return <SubscriptionPage onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -314,6 +319,36 @@ const UserDashboard: React.FC = () => {
                       className="text-teal-600 hover:text-teal-500 font-medium"
                     >
                       Configure Sources →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">Subscription Plans</dt>
+                        <dd className="text-lg font-medium text-gray-900">Upgrade Your Plan</dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 px-5 py-3">
+                  <div className="text-sm">
+                    <button 
+                      onClick={() => setCurrentView('subscription')}
+                      className="text-purple-600 hover:text-purple-500 font-medium"
+                    >
+                      View Plans →
                     </button>
                   </div>
                 </div>
