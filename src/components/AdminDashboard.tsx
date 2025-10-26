@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import UserManagement from './UserManagement';
 import JobSourceManagement from './JobSourceManagement';
+import AnalyticsDashboard from './AnalyticsDashboard';
 import api from '../services/api';
 import { API_ENDPOINTS } from '../constants';
 
@@ -15,7 +16,7 @@ interface AnalyticsData {
 
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'user-management' | 'job-source-management'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'user-management' | 'job-source-management' | 'analytics'>('dashboard');
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +41,10 @@ const AdminDashboard: React.FC = () => {
 
   if (currentView === 'job-source-management') {
     return <JobSourceManagement onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'analytics') {
+    return <AnalyticsDashboard onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -226,7 +231,10 @@ const AdminDashboard: React.FC = () => {
                 </div>
                 <div className="bg-gray-50 px-5 py-3">
                   <div className="text-sm">
-                    <button className="text-green-600 hover:text-green-500 font-medium">
+                    <button 
+                      onClick={() => setCurrentView('analytics')}
+                      className="text-green-600 hover:text-green-500 font-medium"
+                    >
                       View Analytics →
                     </button>
                   </div>
