@@ -8,6 +8,7 @@ export interface User {
     pk: number;
     name: string;
   };
+  last_login?: string | null;
   linkedin_url?: string;
   github_url?: string;
   resume_file?: string | null;

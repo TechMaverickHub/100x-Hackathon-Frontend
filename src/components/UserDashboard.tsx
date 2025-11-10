@@ -31,6 +31,17 @@ const UserDashboard: React.FC = () => {
     | 'ai-call-list'
   >('dashboard');
   const [creditsRemaining, setCreditsRemaining] = useState<number | null>(null);
+  const lastLoginDate = user?.last_login ? new Date(user.last_login) : null;
+  const lastLoginDisplay = lastLoginDate
+    ? lastLoginDate.toLocaleString(undefined, {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      })
+    : null;
 
   useEffect(() => {
     const fetchCredits = async () => {
@@ -462,10 +473,16 @@ const UserDashboard: React.FC = () => {
                             </div>
                             <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                               <div>
-                                <p className="text-sm text-gray-500">Welcome to PortfolioAI! Your account has been created successfully.</p>
+                                <p className="text-sm text-gray-500">
+                                  {lastLoginDate
+                                    ? 'You logged in to PortfolioAI successfully.'
+                                    : 'Last login information is not available.'}
+                                </p>
                               </div>
                               <div className="text-right text-sm whitespace-nowrap text-gray-500">
-                                <time>Just now</time>
+                                {lastLoginDate && (
+                                  <time dateTime={user?.last_login ?? undefined}>{lastLoginDisplay}</time>
+                                )}
                               </div>
                             </div>
                           </div>
