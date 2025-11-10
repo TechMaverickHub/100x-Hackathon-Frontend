@@ -24,6 +24,7 @@ export const API_ENDPOINTS = {
   JOB_SOURCE_LIST: 'job-source/list',
   JOB_SOURCE_USER_SELECTION: 'job-source/user-selection',
   JOB_SOURCE_UPDATE_SELECTION: 'job-source/update-selection',
+  JOB_SOURCE_GET_ALERTS: 'job-source/get-job-alerts',
   ANALYTICS_COUNT: 'analytics/count',
   ANALYTICS_USER_REGISTRATION_TREND: 'analytics/user-registration-trend',
   ANALYTICS_SOURCE_POPULARITY: 'analytics/source-popularity',
