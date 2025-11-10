@@ -364,8 +364,8 @@ const UserDashboard: React.FC = () => {
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Job Alerts</dt>
-                        <dd className="text-lg font-medium text-gray-900">View Matches</dd>
+                        <dt className="text-sm font-medium text-gray-500 truncate">Recommended Jobs</dt>
+                        <dd className="text-lg font-medium text-gray-900">Recommended Jobs</dd>
                       </dl>
                     </div>
                   </div>
@@ -376,7 +376,7 @@ const UserDashboard: React.FC = () => {
                       onClick={() => setCurrentView('job-alerts')}
                       className="text-yellow-600 hover:text-yellow-500 font-medium"
                     >
-                      See Job Alerts →
+                      View Recommended Jobs →
                     </button>
                   </div>
                 </div>

@@ -51,9 +51,9 @@ const JobAlerts: React.FC<JobAlertsProps> = ({ onBack }) => {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Job Alerts</h1>
+              <h1 className="text-3xl font-bold text-gray-900">Recommended Jobs</h1>
               <p className="mt-2 text-gray-600">
-                Personalized job matches generated from your selected job sources.
+                Curated job matches generated from your selected job sources.
               </p>
               {lastUpdated && (
                 <p className="mt-1 text-sm text-gray-500">
