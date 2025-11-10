@@ -425,7 +425,7 @@ const UserDashboard: React.FC = () => {
                     <div className="ml-5 w-0 flex-1">
                       <dl>
                         <dt className="text-sm font-medium text-gray-500 truncate">AI Call History</dt>
-                        <dd className="text-lg font-medium text-gray-900">View API Calls</dd>
+                        <dd className="text-lg font-medium text-gray-900">View AI Calls</dd>
                       </dl>
                     </div>
                   </div>
