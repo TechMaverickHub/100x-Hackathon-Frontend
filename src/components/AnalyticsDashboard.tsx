@@ -203,18 +203,20 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ onBack }) => {
                     <XAxis
                       dataKey="label"
                       stroke="#6b7280"
-                      tick={{ fontSize: 12 }}
-                      angle={-30}
-                      textAnchor="end"
-                      interval={0}
+                      tick={false}
+                      axisLine={false}
+                      tickLine={false}
                     />
                     <YAxis stroke="#6b7280" allowDecimals={false} tick={{ fontSize: 12 }} />
                     <Tooltip
                       contentStyle={{ borderRadius: 12, borderColor: '#e5e7eb' }}
-                      formatter={(value: number, name: string, props) => [`${value} users`, props.payload.name]}
+                      formatter={(value: number) => [`${value} users`, 'Job Source']}
+                      labelFormatter={(value) => {
+                        const match = sourcePopularityData.find((item) => item.label === value);
+                        return match ? match.name : value;
+                      }}
                     />
-                    <Legend />
-                    <Bar dataKey="count" name="Subscribed Users" radius={[10, 10, 0, 0]}>
+                    <Bar dataKey="count" name="Job Source" radius={[10, 10, 0, 0]}>
                       {sourcePopularityData.map((_, index) => (
                         <Cell key={index} fill={colorPalette[index % colorPalette.length]} />
                       ))}
