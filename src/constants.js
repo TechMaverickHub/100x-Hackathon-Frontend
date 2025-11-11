@@ -30,5 +30,6 @@ export const API_ENDPOINTS = {
   ANALYTICS_SOURCE_POPULARITY: 'analytics/source-popularity',
   ANALYTICS_CREDIT_REMAINING: 'analytics/credit-remaining',
   ANALYTICS_API_CALL_LIST_FILTER: 'analytics/api-call-list-filter',
+  ANALYTICS_DAILY_AI_USAGE: 'analytics/daily-ai-usage',
   // Add more endpoints as needed
 };

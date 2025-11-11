@@ -12,6 +12,18 @@ interface SourcePopularity {
   counts: number[];
 }
 
+interface AIUsageSeries {
+  label: string;
+  data: number[];
+}
+
+interface DailyAIUsage {
+  dates: string[];
+  series: AIUsageSeries[];
+  total_calls: number;
+  totals_by_type: Record<string, number>;
+}
+
 interface AnalyticsDashboardProps {
   onBack: () => void;
 }
@@ -19,18 +31,21 @@ interface AnalyticsDashboardProps {
 const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ onBack }) => {
   const [registrationTrend, setRegistrationTrend] = useState<UserRegistrationTrend | null>(null);
   const [sourcePopularity, setSourcePopularity] = useState<SourcePopularity | null>(null);
+  const [dailyAIUsage, setDailyAIUsage] = useState<DailyAIUsage | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const [trendResponse, popularityResponse] = await Promise.all([
+        const [trendResponse, popularityResponse, aiUsageResponse] = await Promise.all([
           api.get(API_ENDPOINTS.ANALYTICS_USER_REGISTRATION_TREND),
-          api.get(API_ENDPOINTS.ANALYTICS_SOURCE_POPULARITY)
+          api.get(API_ENDPOINTS.ANALYTICS_SOURCE_POPULARITY),
+          api.get(API_ENDPOINTS.ANALYTICS_DAILY_AI_USAGE)
         ]);
         
         setRegistrationTrend(trendResponse.data.results);
         setSourcePopularity(popularityResponse.data.results);
+        setDailyAIUsage(aiUsageResponse.data.results);
       } catch (error) {
         console.error('Error fetching analytics:', error);
       } finally {
@@ -51,8 +66,10 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ onBack }) => {
     const plotWidth = chartWidth - 2 * padding;
     const plotHeight = chartHeight - 2 * padding;
 
+    const denominator = Math.max(data.dates.length - 1, 1);
+
     const points = data.dates.map((date, index) => {
-      const x = padding + (index / (data.dates.length - 1)) * plotWidth;
+      const x = padding + (index / denominator) * plotWidth;
       const y = padding + plotHeight - (data.counts[index] / maxCount) * plotHeight;
       return { x, y, count: data.counts[index] };
     });
@@ -94,7 +111,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ onBack }) => {
 
           {/* X-axis labels */}
           {data.dates.map((date, index) => {
-            const x = padding + (index / (data.dates.length - 1)) * plotWidth;
+            const x = padding + (index / denominator) * plotWidth;
             return (
               <text
                 key={index}
@@ -232,6 +249,126 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ onBack }) => {
     );
   };
 
+  const MultiLineChart: React.FC<{ data: DailyAIUsage }> = ({ data }) => {
+    if (!data.dates.length || !data.series.length) return null;
+
+    const allValues = data.series.flatMap((series) => series.data);
+    const maxCount = Math.max(...allValues, 0);
+    const safeMaxCount = maxCount === 0 ? 1 : maxCount;
+    const chartWidth = 1200;
+    const chartHeight = 320;
+    const padding = 50;
+    const plotWidth = chartWidth - 2 * padding;
+    const plotHeight = chartHeight - 2 * padding;
+    const denominator = Math.max(data.dates.length - 1, 1);
+    const colorPalette = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#14b8a6', '#6366f1', '#ec4899'];
+
+    return (
+      <div className="bg-white p-6 rounded-lg shadow">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">Daily AI Usage</h3>
+          <p className="text-sm text-gray-500">
+            Total calls: <span className="font-semibold text-gray-700">{data.total_calls}</span>
+          </p>
+        </div>
+        <svg width={chartWidth} height={chartHeight} className="border rounded">
+          {/* Grid lines */}
+          {[0, 0.25, 0.5, 0.75, 1].map((ratio) => (
+            <line
+              key={ratio}
+              x1={padding}
+              y1={padding + ratio * plotHeight}
+              x2={padding + plotWidth}
+              y2={padding + ratio * plotHeight}
+              stroke="#e5e7eb"
+              strokeWidth={1}
+            />
+          ))}
+
+          {/* Y-axis labels */}
+          {[0, 0.25, 0.5, 0.75, 1].map((ratio) => (
+            <text
+              key={ratio}
+              x={padding - 12}
+              y={padding + ratio * plotHeight + 5}
+              textAnchor="end"
+              fontSize="12"
+              fill="#6b7280"
+            >
+              {Math.round(safeMaxCount * (1 - ratio))}
+            </text>
+          ))}
+
+          {/* X-axis labels */}
+          {data.dates.map((date, index) => {
+            const x = padding + (index / denominator) * plotWidth;
+            return (
+              <text
+                key={index}
+                x={x}
+                y={chartHeight - padding + 20}
+                textAnchor="middle"
+                fontSize="12"
+                fill="#6b7280"
+              >
+                {new Date(date).toLocaleDateString()}
+              </text>
+            );
+          })}
+
+          {/* Lines and data points */}
+          {data.series.map((series, seriesIndex) => {
+            const color = colorPalette[seriesIndex % colorPalette.length];
+            const points = data.dates.map((date, index) => {
+              const value = series.data[index] ?? 0;
+              const x = padding + (index / denominator) * plotWidth;
+              const y = padding + plotHeight - (value / safeMaxCount) * plotHeight;
+              return { x, y, value };
+            });
+
+            const pathData = points
+              .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
+              .join(' ');
+
+            return (
+              <g key={series.label}>
+                <path d={pathData} fill="none" stroke={color} strokeWidth={3} />
+                {points.map((point, index) => (
+                  <g key={`${series.label}-${index}`}>
+                    <circle cx={point.x} cy={point.y} r={5} fill={color} stroke="white" strokeWidth={2} />
+                    <text
+                      x={point.x}
+                      y={point.y - 12}
+                      textAnchor="middle"
+                      fontSize="11"
+                      fill="#374151"
+                      fontWeight="bold"
+                    >
+                      {point.value}
+                    </text>
+                  </g>
+                ))}
+              </g>
+            );
+          })}
+        </svg>
+
+        {/* Legend */}
+        <div className="mt-4 flex flex-wrap gap-4">
+          {data.series.map((series, index) => (
+            <div key={series.label} className="flex items-center text-sm text-gray-600">
+              <span
+                className="inline-block w-3 h-3 rounded-full mr-2"
+                style={{ backgroundColor: colorPalette[index % colorPalette.length] }}
+              ></span>
+              {series.label}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -267,7 +404,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ onBack }) => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
             {/* User Registration Trend */}
             {registrationTrend && (
               <LineChart data={registrationTrend} />
@@ -276,6 +413,13 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ onBack }) => {
             {/* Source Popularity */}
             {sourcePopularity && (
               <BarChart data={sourcePopularity} />
+            )}
+
+            {/* Daily AI Usage */}
+            {dailyAIUsage && (
+              <div className="xl:col-span-2">
+                <MultiLineChart data={dailyAIUsage} />
+              </div>
             )}
           </div>
 
@@ -324,6 +468,28 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ onBack }) => {
                 </div>
               ) : (
                 <p className="text-gray-500">No source data available</p>
+              )}
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow md:col-span-2">
+              <h3 className="text-lg font-semibold mb-4">AI Usage Summary</h3>
+              {dailyAIUsage ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-gray-600">
+                    Total AI calls: <span className="font-semibold">{dailyAIUsage.total_calls}</span>
+                  </p>
+                  <p className="text-sm text-gray-600">Breakdown by tool:</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {Object.entries(dailyAIUsage.totals_by_type).map(([label, value]) => (
+                      <div key={label} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded">
+                        <span className="text-sm text-gray-700">{label}</span>
+                        <span className="text-sm font-semibold text-gray-900">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-500">No AI usage data available</p>
               )}
             </div>
           </div>
