@@ -314,6 +314,12 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
     window.URL.revokeObjectURL(url);
   };
 
+  const handleBackToOptions = () => {
+    setActiveTab(null);
+    setGeneratedHtml('');
+    setCopySuccess(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -431,7 +437,7 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
                   {isGenerating ? 'Generating...' : 'Generate Portfolio'}
                 </button>
                 <button
-                  onClick={() => setActiveTab(null)}
+                  onClick={handleBackToOptions}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors"
                 >
                   Back to Options
@@ -778,7 +784,7 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
                   {isGenerating ? 'Generating...' : 'Generate Portfolio'}
                 </button>
                 <button
-                  onClick={() => setActiveTab(null)}
+                  onClick={handleBackToOptions}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors"
                 >
                   Back to Options
