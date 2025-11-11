@@ -30,7 +30,7 @@ const JobAlerts: React.FC<JobAlertsProps> = ({ onBack }) => {
     setError('');
 
     try {
-      const response = await api.post<JobAlertsResponse>(`/${API_ENDPOINTS.JOB_SOURCE_GET_ALERTS}`, {});
+      const response = await api.post<JobAlertsResponse>(`/${API_ENDPOINTS.RECOMMEND_JOBS}`, {});
       setAlerts(response.data.results || []);
       setLastUpdated(new Date());
     } catch (err) {
