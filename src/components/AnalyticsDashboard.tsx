@@ -253,7 +253,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ onBack }) => {
                       labelFormatter={(value) => `Date: ${value}`}
                       formatter={(value: number, key: string) => [`${value} calls`, key]}
                     />
-                    <Legend verticalAlign="top" height={36} />
                     {dailyAIUsage.series.map((series, index) => (
                       <Line
                         key={series.label}
