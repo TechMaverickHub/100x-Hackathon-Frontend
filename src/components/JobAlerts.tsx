@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import api from '../services/api';
 import { API_ENDPOINTS } from '../constants';
 
@@ -24,6 +24,7 @@ const JobAlerts: React.FC<JobAlertsProps> = ({ onBack }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [hasFetched, setHasFetched] = useState<boolean>(false);
 
   const fetchJobAlerts = async () => {
     setLoading(true);
@@ -37,13 +38,10 @@ const JobAlerts: React.FC<JobAlertsProps> = ({ onBack }) => {
       console.error('Failed to fetch job alerts:', err);
       setError('Unable to fetch job alerts. Please try again.');
     } finally {
+      setHasFetched(true);
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchJobAlerts();
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -75,7 +73,7 @@ const JobAlerts: React.FC<JobAlertsProps> = ({ onBack }) => {
                 disabled={loading}
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md transition-colors"
               >
-                {loading ? 'Refreshing...' : 'Refresh Alerts'}
+                {loading ? 'Loading...' : hasFetched ? 'Refresh Recommended Jobs' : 'Get Recommended Jobs'}
               </button>
             </div>
           </div>
@@ -104,7 +102,7 @@ const JobAlerts: React.FC<JobAlertsProps> = ({ onBack }) => {
           {loading && alerts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
-              <p className="mt-4 text-gray-600">Fetching job alerts...</p>
+              <p className="mt-4 text-gray-600">Fetching recommended jobs...</p>
             </div>
           ) : alerts.length === 0 ? (
             <div className="text-center py-16 px-6">
@@ -120,16 +118,20 @@ const JobAlerts: React.FC<JobAlertsProps> = ({ onBack }) => {
                   </svg>
                 </span>
               </div>
-              <h2 className="text-xl font-semibold text-gray-900">No job alerts yet</h2>
+              <h2 className="text-xl font-semibold text-gray-900">
+                {hasFetched ? 'No job alerts yet' : 'Ready for your personalized matches?'}
+              </h2>
               <p className="mt-2 text-gray-600">
-                Once new matches are found from your selected job sources, they will appear here.
+                {hasFetched
+                  ? 'Once new matches are found from your selected job sources, they will appear here.'
+                  : 'Click the button below to fetch your latest AI-powered job recommendations.'}
               </p>
               <button
                 onClick={fetchJobAlerts}
                 disabled={loading}
                 className="mt-6 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md transition-colors"
               >
-                {loading ? 'Refreshing...' : 'Check Again'}
+                {loading ? 'Loading...' : hasFetched ? 'Check Again' : 'Get Recommended Jobs'}
               </button>
             </div>
           ) : (
