@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, LoginRequest, RegisterRequest, AuthContextType } from '../types/auth';
 import api from '../services/api';
+import { API_ENDPOINTS } from '../constants';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -39,7 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
-      const response = await api.post('/user/login/', { email, password });
+      const response = await api.post(API_ENDPOINTS.USER_LOGIN, { email, password });
       const { results } = response.data;
       
       setUser(results.user);
@@ -84,7 +85,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         formData.append('resume_file', data.resume_file);
       }
 
-      await api.post('/user/user-sign-up/', formData, {
+      await api.post(API_ENDPOINTS.USER_REGISTER, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
