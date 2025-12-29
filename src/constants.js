@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:8000/api/';
+export const BASE_URL = 'https://one00x-hackathon-backend.onrender.com/api/';
 
 export const API_ENDPOINTS = {
   USER_LOGIN: 'user/login/',
@@ -24,10 +24,12 @@ export const API_ENDPOINTS = {
   JOB_SOURCE_LIST: 'job-source/list',
   JOB_SOURCE_USER_SELECTION: 'job-source/user-selection',
   JOB_SOURCE_UPDATE_SELECTION: 'job-source/update-selection',
+  RECOMMEND_JOBS: 'job-source/recommend-jobs',
   ANALYTICS_COUNT: 'analytics/count',
   ANALYTICS_USER_REGISTRATION_TREND: 'analytics/user-registration-trend',
   ANALYTICS_SOURCE_POPULARITY: 'analytics/source-popularity',
   ANALYTICS_CREDIT_REMAINING: 'analytics/credit-remaining',
   ANALYTICS_API_CALL_LIST_FILTER: 'analytics/api-call-list-filter',
+  ANALYTICS_DAILY_AI_USAGE: 'analytics/daily-ai-usage',
   // Add more endpoints as needed
 };

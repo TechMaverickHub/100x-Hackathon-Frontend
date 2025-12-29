@@ -37,7 +37,7 @@ const AICallListFilter: React.FC<AICallListFilterProps> = ({ onBack }) => {
 
   const generationTypes = [
     "Cover Letter",
-    "Interview Questions", 
+    "Interview Questions",
     "Interview Answers",
     "Portfolio From Resume",
     "Portfolio From QNA",
@@ -46,7 +46,8 @@ const AICallListFilter: React.FC<AICallListFilterProps> = ({ onBack }) => {
     "Resume Keyword Gap",
     "Resume Auto Rewrite",
     "Resume Skills Gap",
-    "Resume Career Recommendation"
+    "Resume Career Recommendation",
+    "Job Recommendation"
   ];
 
   const fetchApiCalls = useCallback(async () => {
@@ -117,7 +118,8 @@ const AICallListFilter: React.FC<AICallListFilterProps> = ({ onBack }) => {
       'Resume Keyword Gap': 'bg-pink-100 text-pink-800',
       'Resume Auto Rewrite': 'bg-teal-100 text-teal-800',
       'Resume Skills Gap': 'bg-cyan-100 text-cyan-800',
-      'Resume Career Recommendation': 'bg-emerald-100 text-emerald-800'
+      'Resume Career Recommendation': 'bg-emerald-100 text-emerald-800',
+      'Job Recommendation': 'bg-lime-100 text-lime-800'
     };
     return colors[type] || 'bg-gray-100 text-gray-800';
   };

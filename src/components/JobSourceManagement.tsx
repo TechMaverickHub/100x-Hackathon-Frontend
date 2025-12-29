@@ -21,8 +21,6 @@ interface JobSourceFormData {
   name: string;
   api_url: string;
   rss_url: string;
-  frequency: 'once' | 'daily' | 'weekly' | 'monthly';
-  alert: boolean;
 }
 
 interface JobSourceManagementProps {
@@ -53,9 +51,7 @@ const JobSourceManagement: React.FC<JobSourceManagementProps> = ({ onBack }) => 
   const [formData, setFormData] = useState<JobSourceFormData>({
     name: '',
     api_url: '',
-    rss_url: '',
-    frequency: 'daily',
-    alert: true
+    rss_url: ''
   });
 
   const fetchJobSources = useCallback(async (page: number = 1, size: number = pageSize) => {
@@ -120,11 +116,11 @@ const JobSourceManagement: React.FC<JobSourceManagementProps> = ({ onBack }) => 
     fetchJobSources(1, size);
   };
 
-  const handleFormInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
+  const handleFormInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: value
     }));
   };
 
@@ -159,9 +155,7 @@ const JobSourceManagement: React.FC<JobSourceManagementProps> = ({ onBack }) => 
     setFormData({
       name: jobSource.name,
       api_url: jobSource.api_url,
-      rss_url: jobSource.rss_url,
-      frequency: 'daily', // Default value since it's not in the API response
-      alert: true // Default value since it's not in the API response
+      rss_url: jobSource.rss_url
     });
     setShowForm(true);
   };
@@ -214,9 +208,7 @@ const JobSourceManagement: React.FC<JobSourceManagementProps> = ({ onBack }) => 
     setFormData({
       name: '',
       api_url: '',
-      rss_url: '',
-      frequency: 'daily',
-      alert: true
+      rss_url: ''
     });
     setEditingJobSource(null);
   };
@@ -306,39 +298,20 @@ const JobSourceManagement: React.FC<JobSourceManagementProps> = ({ onBack }) => 
               {editingJobSource ? 'Edit Job Source' : 'Add New Job Source'}
             </h2>
             <form onSubmit={editingJobSource ? handleUpdateJobSource : handleCreateJobSource} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleFormInputChange}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter job source name"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="frequency" className="block text-sm font-medium text-gray-700 mb-1">
-                    Frequency
-                  </label>
-                  <select
-                    id="frequency"
-                    name="frequency"
-                    value={formData.frequency}
-                    onChange={handleFormInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="once">Once</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
-                </div>
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleFormInputChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter job source name"
+                />
               </div>
               <div>
                 <label htmlFor="api_url" className="block text-sm font-medium text-gray-700 mb-1">
@@ -369,19 +342,6 @@ const JobSourceManagement: React.FC<JobSourceManagementProps> = ({ onBack }) => 
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="https://example.com/rss"
                 />
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="alert"
-                  name="alert"
-                  checked={formData.alert}
-                  onChange={handleFormInputChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="alert" className="ml-2 block text-sm text-gray-900">
-                  Enable alerts for this job source
-                </label>
               </div>
               <div className="flex justify-end space-x-4 pt-4">
                 <button

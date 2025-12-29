@@ -79,6 +79,7 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
   const [generatedHtml, setGeneratedHtml] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
   const [qnaFormData, setQnaFormData] = useState<QnAFormData>({
     name: '',
     role: '',
@@ -314,6 +315,13 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
     window.URL.revokeObjectURL(url);
   };
 
+  const handleBackToOptions = () => {
+    setActiveTab(null);
+    setGeneratedHtml('');
+    setCopySuccess(false);
+    setPreviewMode('desktop');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -431,7 +439,7 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
                   {isGenerating ? 'Generating...' : 'Generate Portfolio'}
                 </button>
                 <button
-                  onClick={() => setActiveTab(null)}
+                  onClick={handleBackToOptions}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors"
                 >
                   Back to Options
@@ -778,7 +786,7 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
                   {isGenerating ? 'Generating...' : 'Generate Portfolio'}
                 </button>
                 <button
-                  onClick={() => setActiveTab(null)}
+                  onClick={handleBackToOptions}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md font-medium transition-colors"
                 >
                   Back to Options
@@ -830,14 +838,48 @@ const PortfolioBuilder: React.FC<PortfolioBuilderProps> = ({ onBack }) => {
                 <div className="bg-white rounded-lg border p-4">
                   <div className="flex justify-between items-center mb-3">
                     <h3 className="text-gray-900 font-medium">Preview</h3>
-                    <span className="text-gray-400 text-sm">
-                      Live preview
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setPreviewMode('mobile')}
+                        className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${
+                          previewMode === 'mobile'
+                            ? 'bg-indigo-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        Mobile
+                      </button>
+                      <button
+                        onClick={() => setPreviewMode('desktop')}
+                        className={`px-3 py-1 text-sm rounded-md font-medium transition-colors ${
+                          previewMode === 'desktop'
+                            ? 'bg-indigo-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        Desktop
+                      </button>
+                      <span className="text-gray-400 text-sm">
+                        Live preview
+                      </span>
+                    </div>
                   </div>
-                  <div className="border rounded-lg overflow-hidden">
+                  <div
+                    className={`border rounded-lg overflow-hidden bg-gray-100 flex justify-center ${
+                      previewMode === 'mobile' ? 'py-4' : ''
+                    }`}
+                  >
                     <iframe
                       srcDoc={generatedHtml}
-                      className="w-full h-96"
+                      className={`bg-white ${
+                        previewMode === 'mobile'
+                          ? 'rounded-lg shadow-md border border-gray-200'
+                          : 'w-full'
+                      }`}
+                      style={{
+                        width: previewMode === 'mobile' ? '375px' : '100%',
+                        height: previewMode === 'mobile' ? '667px' : '600px'
+                      }}
                       title="Portfolio Preview"
                     />
                   </div>

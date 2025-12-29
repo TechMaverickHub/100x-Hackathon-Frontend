@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import UserManagement from './UserManagement';
 import JobSourceManagement from './JobSourceManagement';
 import AnalyticsDashboard from './AnalyticsDashboard';
+import JobAlerts from './JobAlerts';
 import api from '../services/api';
 import { API_ENDPOINTS } from '../constants';
 
@@ -16,7 +17,7 @@ interface AnalyticsData {
 
 const AdminDashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'user-management' | 'job-source-management' | 'analytics'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'user-management' | 'job-source-management' | 'analytics' | 'job-alerts'>('dashboard');
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,6 +46,10 @@ const AdminDashboard: React.FC = () => {
 
   if (currentView === 'analytics') {
     return <AnalyticsDashboard onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'job-alerts') {
+    return <JobAlerts onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
